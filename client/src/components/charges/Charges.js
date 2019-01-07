@@ -22,6 +22,15 @@ class ChargesTab extends React.Component {
         this.setState({ value });
     };
 
+    componentDidMount() {
+        const guestChargesDataKey = this.contracts.P2Pcharging.methods["getGuestChargesId"].cacheCall();
+        const hostChargesDataKey = this.contracts.P2Pcharging.methods["getHostChargesId"].cacheCall();
+        this.setState({
+            guestChargesDataKey,
+            hostChargesDataKey
+        })
+    }
+
     render() {
         const { value } = this.state;
         return (
