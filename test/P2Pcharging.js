@@ -31,15 +31,15 @@ contract("P2Pcharging", accounts => {
     }),
     it("allows user to request a charger", async () => {
         const P2PchargingInstance = await P2Pcharging.deployed();
-        const owner = accounts[0];
-        const guest = accounts[1];
+        const owner = accounts[1];
+        const guest = accounts[2];
         const chargerId = 1;
         await P2PchargingInstance.requestCharge(owner, chargerId, "1546844450", "1546844582", {
             from: guest,
             value: web3.utils.toWei("2", "finney")
         })
         const chargesCount = await P2PchargingInstance.chargesCount();
-        assert.equal(chargesCount, 1, "Charge count correct added")
+        assert.equal(chargesCount, 2, "Charge count correct added")
         let guestChargesId = await P2PchargingInstance.getGuestChargesId({
             from: guest
         });
