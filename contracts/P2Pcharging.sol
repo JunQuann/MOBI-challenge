@@ -12,9 +12,9 @@ contract P2Pcharging {
         uint chargerVoltage;
     }
 
-    enum chargeStatus { pending, rejected, reserved, paid }
+    enum chargeStatus { pending, rejected, reserved, completed }
 
-    struct Charges {
+    struct Charge {
         uint chargeId;
         chargeStatus status;
         address guest;
@@ -26,10 +26,10 @@ contract P2Pcharging {
 
     mapping(address => uint8[]) public guestChargesId;
     mapping(address => uint8[]) public hostChargesId;
-    mapping(uint8 => Charges) public allCharges;
+    mapping(uint8 => Charge) public allCharges;
     uint8 public chargesCount;
 
-    mapping(address => uint256) walletBalance;
+    mapping(address => uint) walletBalance;
 
     // Every address can only register one charger
     mapping(uint => Charger) public chargers;
@@ -40,7 +40,7 @@ contract P2Pcharging {
         address owner, uint chargerId, uint64 startDatetime, uint64 endDatetime
     ) public payable {
         chargesCount++;
-        allCharges[chargesCount] = Charges(
+        allCharges[chargesCount] = Charge(
             chargesCount,
             chargeStatus.pending,
             msg.sender,
@@ -53,15 +53,46 @@ contract P2Pcharging {
         hostChargesId[owner].push(chargesCount);
     }
 
-    // function updateChargeStatus (
-    //     uint8 chargerId, string memory status
-    // ) public {
+    function hashCompareWithLengthCheck(string memory a, string memory b) internal pure returns (bool) {
+        if(bytes(a).length != bytes(b).length) {
+            return false;
+        } else {
+            return keccak256(bytes(a)) == keccak256(bytes(b));
+        }
+    }
 
-    // }
+    function updateChargeStatus (
+        uint8 chargerId, string memory status
+    ) public {
+        Charge memory charge = allCharges[chargerId];
+        if(hashCompareWithLengthCheck(status, "1")) {
+            rejectChargeRequest(charge);
+        } else if(hashCompareWithLengthCheck(status, "2")) {
+            approveChargeRequest(charge);
+        } else {
+            completeChargeRequest(charge);
+        }
+    }
 
-    // function withdraw() public {
+    function approveChargeRequest(Charge memory charge) internal pure {
+        charge.status = chargeStatus.reserved;
+    }
 
-    // }
+    function rejectChargeRequest(Charge memory charge) internal {
+        charge.status = chargeStatus.rejected;
+        walletBalance[charge.guest] = charge.value;
+    }
+
+    function completeChargeRequest(Charge memory charge) internal {
+        charge.status = chargeStatus.completed;
+        walletBalance[charge.charger.owner] = charge.value;
+    }
+
+    function withdraw() public returns (bool) {
+        msg.sender.transfer(walletBalance[msg.sender]);
+        walletBalance[msg.sender] = 0;
+        return true;
+    }
 
     function registerCharger(
         string memory chargerAddress, string memory chargerType, uint chargerAmps, uint chargerVoltage
@@ -109,6 +140,6 @@ contract P2Pcharging {
     constructor() public {
         registerCharger("68 Willow Rd, Menlo Park, CA 94025, USA", "CHAdeMO", 30, 240);
         // Initialized 1 charge for testing purposes
-        requestCharge(address(0xaC0A4266B7a2B6D4AF8721b51B9D1FDaF8173E38), 1, 1546903257, 1546904123);
+        requestCharge(address(0xaC0A4266B7a2B6D4AF8721b51B9D1FDaF8173E38), 1, 1546903257, 1546907844);
     }
 }

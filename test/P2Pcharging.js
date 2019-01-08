@@ -34,7 +34,7 @@ contract("P2Pcharging", accounts => {
         const owner = accounts[1];
         const guest = accounts[2];
         const chargerId = 1;
-        await P2PchargingInstance.requestCharge(owner, chargerId, "1546844450", "1546844582", {
+        await P2PchargingInstance.requestCharge(owner, chargerId, 1546844450, 1546844582, {
             from: guest,
             value: web3.utils.toWei("2", "finney")
         })
@@ -48,9 +48,9 @@ contract("P2Pcharging", accounts => {
             from: owner
         });
         hostChargesId = hostChargesId.map(BN => BN.toNumber());
-        assert.equal(guestChargesId[0], 1, "first charge correctly registered for guest");
-        assert.equal(hostChargesId[0], 1, "first charge correctly registered for host");
-        const charge = await P2PchargingInstance.allCharges(1);
+        assert.equal(guestChargesId[0], 2, "second charge correctly registered for guest");
+        assert.equal(hostChargesId[0], 2, "second charge correctly registered for host");
+        const charge = await P2PchargingInstance.allCharges(2);
         assert.equal(charge.value, web3.utils.toWei("2", "finney"), "Value correctly recorded");
     })
 })
