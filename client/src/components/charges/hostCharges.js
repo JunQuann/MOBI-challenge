@@ -81,20 +81,20 @@ class HostChargesTable extends React.Component {
                 )
             case "1":
                 return (
-                    <Button variant="contained" className={classes.button} style={{backgroundColor: 'orange'}}>
-                        Pending
+                    <Button variant="contained" className={classes.button} style={{backgroundColor: 'Red'}}>
+                        Rejected
                     </Button>
                 )
             case "2":
                 return (
-                    <Button variant="contained" className={classes.button} style={{backgroundColor: 'orange'}}>
-                        Pending
+                    <Button variant="contained" className={classes.button} style={{backgroundColor: 'Green'}}>
+                        Approve
                     </Button>
                 )
             case "3":
                 return (
-                    <Button variant="contained" className={classes.button} style={{backgroundColor: 'orange'}}>
-                        Pending
+                    <Button variant="contained" className={classes.button} style={{backgroundColor: 'Blue'}}>
+                        Completed
                     </Button>
                 )
             default:
@@ -107,10 +107,9 @@ class HostChargesTable extends React.Component {
         switch (status) {
             case "0":
                 return (
-                    // <Button variant="outlined" disabled className={classes.button} style={{color: 'orange'}}>
-                    //     Pending
-                    // </Button>
-                    <PendingChargeButton chargeId={chargeId} />
+                    <Button variant="outlined" disabled className={classes.button} style={{color: 'orange'}}>
+                        Pending
+                    </Button>
                 )
             case "1":
                 return (

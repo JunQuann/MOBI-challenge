@@ -11,6 +11,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { format, isAfter } from 'date-fns';
+import CompleteChargeButton from './completeChargeButton';
 
 
 const styles = theme => ({
@@ -71,7 +72,7 @@ class GuestChargesTable extends React.Component {
         }
     }
 
-    renderStatusButton = (status) => {
+    renderStatusButton = (status, chargeId) => {
         const { classes } = this.props;
         switch (status) {
             case "0":
@@ -80,15 +81,27 @@ class GuestChargesTable extends React.Component {
                         Pending
                     </Button>
                 )
-            case "1":
-            case "2":
-            case "3":
-            default:
+                case "1":
+                return (
+                    <Button variant="contained" className={classes.button} style={{backgroundColor: 'Red'}}>
+                        Rejected
+                    </Button>
+                    )
+                case "2":
+                    return (
+                        <CompleteChargeButton chargeId={chargeId} />
+                    )
+                case "3":
+                    return (
+                        <Button variant="contained" className={classes.button} style={{backgroundColor: 'Blue'}}>
+                            Completed
+                        </Button>
+                    )
                 break;
         }
     }
 
-    renderHistoryStatusButton = (status) => {
+    renderHistoryStatusButton = (status, chargeId) => {
         const { classes } = this.props;
         switch (status) {
             case "0":
@@ -98,8 +111,23 @@ class GuestChargesTable extends React.Component {
                     </Button>
                 )
             case "1":
+                return (
+                    <Button variant="outlined" disabled className={classes.button} style={{color: 'red'}}>
+                        Rejected
+                    </Button>
+                )
             case "2":
+                return (
+                    <Button variant="outlined" disabled className={classes.button} style={{color: 'green'}}>
+                        Reserved
+                    </Button>
+                )
             case "3":
+                return (
+                    <Button variant="contained" disabled className={classes.button} style={{backgroundColor: 'green'}}>
+                        Completed
+                    </Button>
+                )
             default:
                 break;
         }
@@ -130,7 +158,7 @@ class GuestChargesTable extends React.Component {
                                 return (
                                     <TableRow key={charge.chargeId}>
                                         <TableCell component="th" scope="row">
-                                            {this.renderStatusButton(charge.status)}
+                                            {this.renderStatusButton(charge.status, charge.chargeId)}
                                         </TableCell>
                                         <TableCell>{charge.charger.chargerAddress}</TableCell>
                                         <TableCell>
@@ -167,7 +195,7 @@ class GuestChargesTable extends React.Component {
                                 return (
                                     <TableRow key={charge.chargeId}>
                                         <TableCell component="th" scope="row">
-                                            {this.renderHistoryStatusButton(charge.status)}
+                                            {this.renderHistoryStatusButton(charge.status, charge.chargeId)}
                                         </TableCell>
                                         <TableCell>{charge.charger.chargerAddress}</TableCell>
                                         <TableCell>
