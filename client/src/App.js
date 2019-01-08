@@ -5,7 +5,8 @@ import { BrowserRouter as Router, Route } from "react-router-dom"
 import ChargersMapContainer from './components/chargersMap/ChargersMapContainer';
 import RegisterCharger_1 from './components/registerCharger/RegisterCharger_1';
 import SearchAppBar from './components/appBar';
-import ChargesTab from './components/charges/Charges'
+import ChargesTab from './components/charges/Charges';
+import MyAccount from './components/myAccount/MyAccount';
 
 class App extends React.Component {
 
@@ -34,7 +35,7 @@ class App extends React.Component {
                     <SearchAppBar handleAddressInput={this.handleAddressInput} />
                     <Route path="/" exact render={() => <ChargersMapContainer position={this.state.position}/>} />
                     <Route path="/host/" component={RegisterCharger_1} />
-                    {/* <Route path="/account/" component={() => <div>account</div>} /> */}
+                    <Route path="/account/" component={MyAccount} />
                     <Route path="/charges/" component={ChargesTab} />
                 </Fragment>
             </Router>

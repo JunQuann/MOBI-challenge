@@ -41,7 +41,7 @@ class PrimarySearchAppBar extends React.Component {
             <MapsSearchBar handleAddressInput={this.props.handleAddressInput}/>
             <div className={classes.grow} />
             <Button component={Link} to="/host" color="inherit">Become a Host</Button>
-            {/* <Button component={Link} to="/account" color="inherit">My Account</Button> */}
+            <Button component={Link} to="/account" color="inherit">My Account</Button>
             <Button component={Link} to="/charges" color="inherit">Charges</Button>
           </Toolbar>
         </AppBar>

@@ -62,7 +62,7 @@ contract("P2Pcharging", accounts => {
             from: guest,
             value: web3.utils.toWei("2", "finney")
         })
-        const chargeId = 2;
+        const chargeId = 1;
         let charge = await P2PchargingInstance.allCharges(chargeId);
         const value = charge.value.toNumber();
         assert.equal(charge.status, "0", "charge initialized with pending state")
@@ -81,7 +81,7 @@ contract("P2Pcharging", accounts => {
             from: guest,
             value: web3.utils.toWei("2", "finney")
         })
-        const chargeId = 3;
+        const chargeId = 2;
         let charge = await P2PchargingInstance.allCharges(chargeId);
         assert.equal(charge.status, "0", "charge initialized with pending state")
         await P2PchargingInstance.updateChargeStatus(chargeId, "2");
@@ -97,7 +97,7 @@ contract("P2Pcharging", accounts => {
             from: guest,
             value: web3.utils.toWei("2", "finney")
         })
-        const chargeId = 4;
+        const chargeId = 3;
         let charge = await P2PchargingInstance.allCharges(chargeId);
         const value = charge.value.toNumber();
         assert.equal(charge.status, "0", "charge initialized with pending state")

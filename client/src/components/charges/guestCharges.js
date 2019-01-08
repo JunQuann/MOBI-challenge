@@ -97,6 +97,7 @@ class GuestChargesTable extends React.Component {
                             Completed
                         </Button>
                     )
+                default:
                 break;
         }
     }

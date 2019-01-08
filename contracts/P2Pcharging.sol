@@ -93,9 +93,10 @@ contract P2Pcharging {
         walletBalance[owner] = value;
     }
 
-    function withdraw() public returns (bool) {
-        msg.sender.transfer(walletBalance[msg.sender]);
-        walletBalance[msg.sender] = 0;
+    function withdraw(uint amount) public returns (bool) {
+        require(amount <= walletBalance[msg.sender]);
+        msg.sender.transfer(amount);
+        walletBalance[msg.sender] = walletBalance[msg.sender] - amount;
         return true;
     }
 
@@ -144,7 +145,5 @@ contract P2Pcharging {
     // Initialized with 1 Charger for testing purposes
     constructor() public {
         registerCharger("68 Willow Rd, Menlo Park, CA 94025, USA", "CHAdeMO", 30, 240);
-        // Initialized 1 charge for testing purposes
-        requestCharge(address(0xaC0A4266B7a2B6D4AF8721b51B9D1FDaF8173E38), 1, 1546903257, 1546907844);
     }
 }
