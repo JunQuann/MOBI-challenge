@@ -24,12 +24,12 @@ contract P2Pcharging {
         uint64 endDatetime;
     }
 
-    mapping(address => uint8[]) public guestChargesId;
-    mapping(address => uint8[]) public hostChargesId;
-    mapping(uint8 => Charge) public allCharges;
-    uint8 public chargesCount;
+    mapping(address => uint[]) public guestChargesId;
+    mapping(address => uint[]) public hostChargesId;
+    mapping(uint => Charge) public allCharges;
+    uint public chargesCount;
 
-    mapping(address => uint) walletBalance;
+    mapping(address => uint) public walletBalance;
 
     // Every address can only register one charger
     mapping(uint => Charger) public chargers;
@@ -62,30 +62,35 @@ contract P2Pcharging {
     }
 
     function updateChargeStatus (
-        uint8 chargerId, string memory status
+        uint8 chargeId, string memory status
     ) public {
-        Charge memory charge = allCharges[chargerId];
-        if(hashCompareWithLengthCheck(status, "1")) {
-            rejectChargeRequest(charge);
-        } else if(hashCompareWithLengthCheck(status, "2")) {
-            approveChargeRequest(charge);
-        } else {
-            completeChargeRequest(charge);
+        require(allCharges[chargeId].status != chargeStatus.rejected);
+        require(allCharges[chargeId].status != chargeStatus.completed);
+        if(hashCompareWithLengthCheck(status, "1") && allCharges[chargeId].status == chargeStatus.pending) {
+            rejectChargeRequest(chargeId);
+        } else if(hashCompareWithLengthCheck(status, "2") && allCharges[chargeId].status == chargeStatus.pending) {
+            approveChargeRequest(chargeId);
+        } else if(hashCompareWithLengthCheck(status, "3") && allCharges[chargeId].status == chargeStatus.reserved) {
+            completeChargeRequest(chargeId);
         }
     }
 
-    function approveChargeRequest(Charge memory charge) internal pure {
-        charge.status = chargeStatus.reserved;
+    function approveChargeRequest(uint chargeId) internal {
+        allCharges[chargeId].status = chargeStatus.reserved;
     }
 
-    function rejectChargeRequest(Charge memory charge) internal {
-        charge.status = chargeStatus.rejected;
-        walletBalance[charge.guest] = charge.value;
+    function rejectChargeRequest(uint chargeId) internal {
+        allCharges[chargeId].status = chargeStatus.rejected;
+        address guest = allCharges[chargeId].guest;
+        uint value = allCharges[chargeId].value;
+        walletBalance[guest] = value;
     }
 
-    function completeChargeRequest(Charge memory charge) internal {
-        charge.status = chargeStatus.completed;
-        walletBalance[charge.charger.owner] = charge.value;
+    function completeChargeRequest(uint chargeId) internal {
+        allCharges[chargeId].status = chargeStatus.completed;
+        address owner = allCharges[chargeId].charger.owner;
+        uint value = allCharges[chargeId].value;
+        walletBalance[owner] = value;
     }
 
     function withdraw() public returns (bool) {

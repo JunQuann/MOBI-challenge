@@ -40,21 +40,21 @@ class GuestChargesTable extends React.Component {
 
     populateCharges = () => {
         const now = new Date()
-        const { guestCharges } = this.props
-        for (let i = 0; i < guestCharges.length; i++) {
-            const guestCharge = guestCharges[i]
-            if (isAfter(guestCharge.startDatetime, now)) {
+        const { charges } = this.props
+        for (let i = 0; i < charges.length; i++) {
+            const charge = charges[i]
+            if (isAfter(charge.startDatetime, now)) {
                 this.setState({
                     futureCharges: [
                         ...this.state.futureCharges,
-                        guestCharge
+                        charge
                     ]
                 })
             } else {
                 this.setState({
                     pastCharges: [
                         ...this.state.pastCharges,
-                        guestCharge
+                        charge
                     ]
                 })
             }
@@ -66,7 +66,7 @@ class GuestChargesTable extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        if (this.props.guestCharges !== prevProps.guestCharges ) {
+        if (this.props.charges !== prevProps.charges ) {
             this.populateCharges();
         }
     }
@@ -77,6 +77,23 @@ class GuestChargesTable extends React.Component {
             case "0":
                 return (
                     <Button variant="contained" className={classes.button} style={{backgroundColor: 'orange'}}>
+                        Pending
+                    </Button>
+                )
+            case "1":
+            case "2":
+            case "3":
+            default:
+                break;
+        }
+    }
+
+    renderHistoryStatusButton = (status) => {
+        const { classes } = this.props;
+        switch (status) {
+            case "0":
+                return (
+                    <Button variant="outlined" disabled className={classes.button} style={{color: 'orange'}}>
                         Pending
                     </Button>
                 )
@@ -101,11 +118,11 @@ class GuestChargesTable extends React.Component {
                     <Table className={classes.table}>
                         <TableHead>
                         <TableRow>
+                            <TableCell>Status</TableCell>
                             <TableCell>Address</TableCell>
-                            <TableCell align="right">Start</TableCell>
-                            <TableCell align="right">End</TableCell>
-                            <TableCell align="right">Price</TableCell>
-                            <TableCell align="right">Status</TableCell>
+                            <TableCell>Start</TableCell>
+                            <TableCell>End</TableCell>
+                            <TableCell>Price</TableCell>
                         </TableRow>
                         </TableHead>
                         <TableBody>
@@ -113,16 +130,16 @@ class GuestChargesTable extends React.Component {
                                 return (
                                     <TableRow key={charge.chargeId}>
                                         <TableCell component="th" scope="row">
-                                            {charge.charger.chargerAddress}  
+                                            {this.renderStatusButton(charge.status)}
                                         </TableCell>
-                                        <TableCell align="right">
+                                        <TableCell>{charge.charger.chargerAddress}</TableCell>
+                                        <TableCell>
                                             {format(charge.startDatetime, "dd MMM yyyy, h:mma")}
                                         </TableCell>
-                                        <TableCell align="right">
+                                        <TableCell>
                                             {format(charge.endDatetime, "dd MMM yyyy, h:mma")}
                                         </TableCell>
-                                        <TableCell align="right">{charge.value}</TableCell>
-                                        <TableCell align="right">{this.renderStatusButton(charge.status)}</TableCell>
+                                        <TableCell>{charge.value}</TableCell>
                                     </TableRow>
                                 )
                             })}
@@ -138,11 +155,11 @@ class GuestChargesTable extends React.Component {
                     <Table className={classes.table}>
                         <TableHead>
                         <TableRow>
+                            <TableCell>Status</TableCell>
                             <TableCell>Address</TableCell>
-                            <TableCell align="left">Start</TableCell>
-                            <TableCell align="left">End</TableCell>
-                            <TableCell align="left">Price</TableCell>
-                            <TableCell align="left">Status</TableCell>
+                            <TableCell>Start</TableCell>
+                            <TableCell>End</TableCell>
+                            <TableCell>Price</TableCell>
                         </TableRow>
                         </TableHead>
                         <TableBody>
@@ -150,16 +167,16 @@ class GuestChargesTable extends React.Component {
                                 return (
                                     <TableRow key={charge.chargeId}>
                                         <TableCell component="th" scope="row">
-                                            {charge.charger.chargerAddress}  
+                                            {this.renderHistoryStatusButton(charge.status)}
                                         </TableCell>
-                                        <TableCell align="left">
+                                        <TableCell>{charge.charger.chargerAddress}</TableCell>
+                                        <TableCell>
                                             {format(charge.startDatetime, "dd MMM yyyy, h:mma")}
                                         </TableCell>
-                                        <TableCell align="left">
+                                        <TableCell>
                                             {format(charge.endDatetime, "dd MMM yyyy, h:mma")}
                                         </TableCell>
-                                        <TableCell align="left">{charge.value}</TableCell>
-                                        <TableCell align="left">{this.renderStatusButton(charge.status)}</TableCell>
+                                        <TableCell>{charge.value}</TableCell>
                                     </TableRow>
                                 )
                             })} 

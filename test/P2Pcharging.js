@@ -31,8 +31,8 @@ contract("P2Pcharging", accounts => {
     }),
     it("allows user to request a charger", async () => {
         const P2PchargingInstance = await P2Pcharging.deployed();
-        const owner = accounts[1];
-        const guest = accounts[2];
+        const owner = accounts[0];
+        const guest = accounts[1];
         const chargerId = 1;
         await P2PchargingInstance.requestCharge(owner, chargerId, 1546844450, 1546844582, {
             from: guest,
@@ -48,9 +48,64 @@ contract("P2Pcharging", accounts => {
             from: owner
         });
         hostChargesId = hostChargesId.map(BN => BN.toNumber());
-        assert.equal(guestChargesId[0], 2, "second charge correctly registered for guest");
-        assert.equal(hostChargesId[0], 2, "second charge correctly registered for host");
+        assert.equal(guestChargesId[0], 2, "first charge correctly registered for guest");
+        assert.equal(hostChargesId[1], 2, "second charge correctly registered for host");
         const charge = await P2PchargingInstance.allCharges(2);
         assert.equal(charge.value, web3.utils.toWei("2", "finney"), "Value correctly recorded");
+    }),
+    it("allows user to reject charge status", async () => {
+        const P2PchargingInstance = await P2Pcharging.deployed();
+        const owner = accounts[0];
+        const guest = accounts[1];
+        const chargerId = 1;
+        await P2PchargingInstance.requestCharge(owner, chargerId, 1546844450, 1546844582, {
+            from: guest,
+            value: web3.utils.toWei("2", "finney")
+        })
+        const chargeId = 2;
+        let charge = await P2PchargingInstance.allCharges(chargeId);
+        const value = charge.value.toNumber();
+        assert.equal(charge.status, "0", "charge initialized with pending state")
+        await P2PchargingInstance.updateChargeStatus(chargeId, "1");
+        charge = await P2PchargingInstance.allCharges(chargeId);
+        let balance = await P2PchargingInstance.walletBalance(guest)
+        assert.equal(charge.status, "1", "charge updated with rejected state")
+        assert.equal(balance, value, "balance successfully refunded to guest")
+    }),
+    it("allows user to approve charge status", async () => {
+        const P2PchargingInstance = await P2Pcharging.deployed();
+        const owner = accounts[0];
+        const guest = accounts[1];
+        const chargerId = 1;
+        await P2PchargingInstance.requestCharge(owner, chargerId, 1546844450, 1546844582, {
+            from: guest,
+            value: web3.utils.toWei("2", "finney")
+        })
+        const chargeId = 3;
+        let charge = await P2PchargingInstance.allCharges(chargeId);
+        assert.equal(charge.status, "0", "charge initialized with pending state")
+        await P2PchargingInstance.updateChargeStatus(chargeId, "2");
+        charge = await P2PchargingInstance.allCharges(chargeId);
+        assert.equal(charge.status, "2", "charge updated with reserved state")
+    }),
+    it("allows user to complete charge status", async () => {
+        const P2PchargingInstance = await P2Pcharging.deployed();
+        const owner = accounts[0];
+        const guest = accounts[1];
+        const chargerId = 1;
+        await P2PchargingInstance.requestCharge(owner, chargerId, 1546844450, 1546844582, {
+            from: guest,
+            value: web3.utils.toWei("2", "finney")
+        })
+        const chargeId = 4;
+        let charge = await P2PchargingInstance.allCharges(chargeId);
+        const value = charge.value.toNumber();
+        assert.equal(charge.status, "0", "charge initialized with pending state")
+        await P2PchargingInstance.updateChargeStatus(chargeId, "2");
+        await P2PchargingInstance.updateChargeStatus(chargeId, "3");
+        charge = await P2PchargingInstance.allCharges(chargeId);
+        balance = await P2PchargingInstance.walletBalance(owner)
+        assert.equal(charge.status, "3", "charge updated with completed state")
+        assert.equal(balance, value, "balance successfully transferred to owner")
     })
 })

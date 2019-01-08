@@ -4,6 +4,7 @@ import Paper from '@material-ui/core/Paper';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import GuestChargesTable from './guestCharges';
+import HostChargesTable from './hostCharges';
 import Grid from '@material-ui/core/Grid';
 import { drizzleConnect } from 'drizzle-react';
 import { parse } from 'date-fns';
@@ -108,7 +109,8 @@ class ChargesTab extends React.Component {
                         </Tabs>
                     </Paper>
                 </Grid>
-                {value === 0 && <GuestChargesTable guestCharges={this.state.guestCharges}/>}
+                {value === 0 && <GuestChargesTable charges={this.state.guestCharges}/>}
+                {value === 1 && <HostChargesTable charges={this.state.hostCharges}/>}
             </Grid>
         );
     }
