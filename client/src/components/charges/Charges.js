@@ -5,7 +5,8 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import GuestChargesTable from './guestCharges';
 import Grid from '@material-ui/core/Grid';
-import { drizzleConnect } from 'drizzle-react'
+import { drizzleConnect } from 'drizzle-react';
+import { parse } from 'date-fns';
 
 class ChargesTab extends React.Component {
 
@@ -16,6 +17,8 @@ class ChargesTab extends React.Component {
 
     state = {
         value: 0,
+        guestCharges: [],
+        hostCharges: []
     };
 
     handleChange = (event, value) => {
@@ -29,6 +32,55 @@ class ChargesTab extends React.Component {
             guestChargesDataKey,
             hostChargesDataKey
         })
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.P2Pcharging.getGuestChargesId !== prevProps.P2Pcharging.getGuestChargesId) {
+            const { P2Pcharging } = this.props;
+            const allGuestChargesId = P2Pcharging.getGuestChargesId[this.state.guestChargesDataKey]
+            if (allGuestChargesId && allGuestChargesId.value) {
+                this.getGuestCharges(allGuestChargesId.value)
+            }
+        }
+        if (this.props.P2Pcharging.getHostChargesId !== prevProps.P2Pcharging.getHostChargesId) {
+            const { P2Pcharging } = this.props;
+            const allHostChargesId = P2Pcharging.getHostChargesId[this.state.hostChargesDataKey]
+            if (allHostChargesId && allHostChargesId.value) {
+                this.getHostCharges(allHostChargesId.value)
+            }
+        }
+    }
+
+    getGuestCharges = (allGuestChargesId) => {
+        for (let i = 0; i < allGuestChargesId.length; i++) {
+            const id = allGuestChargesId[i]
+            this.contracts.P2Pcharging.methods.allCharges(id).call().then(charge => {
+                charge.startDatetime = parse(charge.startDatetime, 't', new Date())
+                charge.endDatetime = parse(charge.endDatetime, 't', new Date())
+                this.setState({
+                    guestCharges:[
+                        ...this.state.guestCharges,
+                        charge
+                    ]
+                })
+            })
+        }
+    }
+
+    getHostCharges = (allHostChargesId) => {
+        for (let i = 0; i < allHostChargesId.length; i++) {
+            const id = allHostChargesId[i]
+            this.contracts.P2Pcharging.methods.allCharges(id).call().then(charge => {
+                charge.startDatetime = parse(charge.startDatetime, 't', new Date())
+                charge.endDatetime = parse(charge.endDatetime, 't', new Date())
+                this.setState({
+                    hostCharges:[
+                        ...this.state.hostCharges,
+                        charge
+                    ]
+                })
+            })
+        }
     }
 
     render() {
@@ -48,7 +100,7 @@ class ChargesTab extends React.Component {
                         </Tabs>
                     </Paper>
                 </Grid>
-                {value == 0 && <GuestChargesTable />}
+                {value === 0 && <GuestChargesTable guestCharges={this.state.guestCharges}/>}
             </Grid>
         );
     }

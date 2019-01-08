@@ -9,7 +9,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import RequestDatetimePicker from './requestDateTimePicker';
 import { drizzleConnect } from 'drizzle-react';
-import { format, parse } from 'date-fns';
+import { format } from 'date-fns';
 import Web3 from 'web3';
 
 const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
