@@ -18,7 +18,9 @@ class ChargesTab extends React.Component {
     state = {
         value: 0,
         guestCharges: [],
-        hostCharges: []
+        hostCharges: [],
+        updatedGuest: false,
+        updatedHost: false,
     };
 
     handleChange = (event, value) => {
@@ -35,14 +37,20 @@ class ChargesTab extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        if (this.props.P2Pcharging.getGuestChargesId !== prevProps.P2Pcharging.getGuestChargesId) {
+        if (this.props.P2Pcharging.getGuestChargesId !== prevProps.P2Pcharging.getGuestChargesId || !this.state.updatedGuest) {
+            this.setState({
+                updatedGuest: true
+            })
             const { P2Pcharging } = this.props;
             const allGuestChargesId = P2Pcharging.getGuestChargesId[this.state.guestChargesDataKey]
             if (allGuestChargesId && allGuestChargesId.value) {
                 this.getGuestCharges(allGuestChargesId.value)
             }
         }
-        if (this.props.P2Pcharging.getHostChargesId !== prevProps.P2Pcharging.getHostChargesId) {
+        if (this.props.P2Pcharging.getHostChargesId !== prevProps.P2Pcharging.getHostChargesId || !this.state.updatedHost) {
+            this.setState({
+                updatedHost: true
+            })
             const { P2Pcharging } = this.props;
             const allHostChargesId = P2Pcharging.getHostChargesId[this.state.hostChargesDataKey]
             if (allHostChargesId && allHostChargesId.value) {

@@ -66,13 +66,12 @@ class GuestChargesTable extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        if (this.props.guestCharges !== prevProps.guestCharges) {
+        if (this.props.guestCharges !== prevProps.guestCharges ) {
             this.populateCharges();
         }
     }
 
     renderStatusButton = (status) => {
-        console.log('here')
         const { classes } = this.props;
         switch (status) {
             case "0":
@@ -91,7 +90,6 @@ class GuestChargesTable extends React.Component {
 
     render() {
         const { classes } = this.props;
-        console.log(this.state);
         return (
             <Grid item xs={10}>
                 <Paper className={classes.root}>
