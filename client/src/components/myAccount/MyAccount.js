@@ -5,6 +5,10 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
+import { drizzleConnect } from 'drizzle-react';
+import Web3 from 'web3';
+
+const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
 
 const styles = theme => ({
     root: {
@@ -29,8 +33,69 @@ const styles = theme => ({
 });
 
 class MyAccount extends React.Component {
+
+    constructor(props, context) {
+         super(props);
+         this.contracts = context.drizzle.contracts;
+    }
+
+    state = {
+        balanceDataKey: null,
+        balance: null,
+        updated: false,
+        value: ""
+    }
+
+    componentDidMount() {
+        const balanceDataKey = this.contracts.P2Pcharging.methods["walletBalance"].cacheCall(this.props.accounts[0])
+        this.setState({
+            balanceDataKey
+        })
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.P2Pcharging.walletBalance !== prevProps.P2Pcharging.walletBalance || !this.state.updated) {
+            this.setState({
+                updated: true
+            })
+            this.fetchWalletBalance();
+        }
+    }
+
+    handleChange = (e) => {
+        this.setState({
+            value: e.target.value
+        })
+    }
+
+    fetchWalletBalance = () => {
+        const { walletBalance } = this.props.P2Pcharging;
+        const balance = walletBalance[this.state.balanceDataKey];
+        if (balance && balance.value) {
+            this.setState({
+                balance: web3.utils.fromWei(balance.value, "ether")
+            })
+        }
+    }
+
+    handleKeyDown = (e) => {
+        if (e.keyCode === 13) {
+            e.preventDefault();
+            this.withdrawBalance(this.state.value)
+            this.setState({
+                value: ""
+            })
+        }
+    }
+
+    withdrawBalance = value => {
+        this.contracts.P2Pcharging.methods.withdraw(web3.utils.toWei(value.toString(), "ether")).send({
+            from: this.props.accounts[0]
+        });
+    }
+
     render() {
-        const { classes } = this.props;
+        const { classes, P2Pcharging } = this.props;
 
         return (
             <Grid container justify="center">
@@ -40,14 +105,15 @@ class MyAccount extends React.Component {
                             Wallet Balance
                         </Typography>
                         <Typography variant="h2" style={{margin: '20px'}}>
-                            0.002 ETHER
+                            {this.state.balance} ETHER
                         </Typography>
                         <form className={classes.container} autoComplete="off">
                             <TextField
                             label="Amount to withdraw..."
                             className={classes.textField}
-                            // value={}
-                            // onChange={}
+                            value={this.state.value}
+                            onChange={this.handleChange}
+                            onKeyDown={this.handleKeyDown}
                             margin="normal"
                             variant="outlined"
                             />
@@ -63,4 +129,17 @@ MyAccount.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(MyAccount);
+MyAccount.contextTypes = {
+    drizzle: PropTypes.object 
+}
+
+const mapStateToProps = state => {
+    return {
+        accounts: state.accounts,
+        transactions: state.transactions,
+        transactionStack: state.transactionStack,
+        P2Pcharging: state.contracts.P2Pcharging
+    }
+  }
+
+export default withStyles(styles)(drizzleConnect(MyAccount, mapStateToProps));

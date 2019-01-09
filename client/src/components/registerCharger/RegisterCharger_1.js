@@ -7,6 +7,8 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 
 const styles = theme => ({
   root: {
@@ -75,6 +77,12 @@ class RegisterChargerForm extends React.Component {
     })
   }
 
+  handlePlugChange = name => event => {
+    this.setState({
+      [name]: event.target.checked
+    })
+  }
+
   handleSubmit = (e) => {
     e.preventDefault();
     const stackId = this.contracts.P2Pcharging.methods["registerCharger"].cacheSend(
@@ -98,6 +106,7 @@ class RegisterChargerForm extends React.Component {
 
   render() {
     const { classes } = this.props;
+    console.log(this.state)
 
     return (
       <Grid container className={classes.root} justify="center">
@@ -142,6 +151,19 @@ class RegisterChargerForm extends React.Component {
                 onChange={this.handleChange}
               />
             </div>
+            <Grid item xs={12} align="center" style={{marginTop: '20px'}}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={this.state.J1772}
+                    onChange={this.handlePlugChange("J1772")}
+                    value="J1772"
+                    color="primary"
+                  />
+                }
+                label="J1772"
+              />
+            </Grid>
             <Button type="submit" variant="contained" color="primary" className={classes.button}>
               Register
             </Button>

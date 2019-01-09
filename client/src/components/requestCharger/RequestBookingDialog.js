@@ -56,7 +56,7 @@ class RequestBookingDialog extends React.Component {
             serializedStartDate,
             serializedEndDate, {
             from: this.props.accounts[0],
-            value: web3.utils.toWei("2", "finney")
+            value: web3.utils.toWei("50", "finney")
         });
         this.setState({
             stackId

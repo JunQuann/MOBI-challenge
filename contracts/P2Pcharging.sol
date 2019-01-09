@@ -95,8 +95,8 @@ contract P2Pcharging {
 
     function withdraw(uint amount) public returns (bool) {
         require(amount <= walletBalance[msg.sender]);
+        walletBalance[msg.sender] -= amount;
         msg.sender.transfer(amount);
-        walletBalance[msg.sender] = walletBalance[msg.sender] - amount;
         return true;
     }
 

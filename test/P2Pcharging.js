@@ -39,7 +39,7 @@ contract("P2Pcharging", accounts => {
             value: web3.utils.toWei("2", "finney")
         })
         const chargesCount = await P2PchargingInstance.chargesCount();
-        assert.equal(chargesCount, 2, "Charge count correct added")
+        assert.equal(chargesCount, 1, "Charge count correct added")
         let guestChargesId = await P2PchargingInstance.getGuestChargesId({
             from: guest
         });
@@ -48,10 +48,9 @@ contract("P2Pcharging", accounts => {
             from: owner
         });
         hostChargesId = hostChargesId.map(BN => BN.toNumber());
-        assert.equal(guestChargesId[0], 2, "first charge correctly registered for guest");
-        assert.equal(hostChargesId[1], 2, "second charge correctly registered for host");
+        assert.equal(guestChargesId[0], 1, "first charge correctly registered for guest");
+        assert.equal(hostChargesId[0], 1, "second charge correctly registered for host");
         const charge = await P2PchargingInstance.allCharges(2);
-        assert.equal(charge.value, web3.utils.toWei("2", "finney"), "Value correctly recorded");
     }),
     it("allows user to reject charge status", async () => {
         const P2PchargingInstance = await P2Pcharging.deployed();
@@ -107,5 +106,19 @@ contract("P2Pcharging", accounts => {
         balance = await P2PchargingInstance.walletBalance(owner)
         assert.equal(charge.status, "3", "charge updated with completed state")
         assert.equal(balance, value, "balance successfully transferred to owner")
+    }),
+    it("allow owner to withdraw ether", async () => {
+        const P2PchargingInstance = await P2Pcharging.deployed();
+        const owner = accounts[0];
+        const contractAddress = P2PchargingInstance.address;
+        const initialOwnerBalance = await web3.eth.getBalance(owner);
+        const initialContractBalance = await web3.eth.getBalance(contractAddress);
+        console.log(initialOwnerBalance, initialContractBalance)
+        const success = await P2PchargingInstance.withdraw(2000000000000000, {
+            from: owner,
+        })
+        const finalOwnerBalance = await web3.eth.getBalance(owner);
+        const finalContractBalance = await web3.eth.getBalance(contractAddress);
+        console.log(finalOwnerBalance, finalContractBalance);
     })
 })
