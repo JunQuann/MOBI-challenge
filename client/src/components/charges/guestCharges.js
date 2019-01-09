@@ -12,6 +12,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { format, isAfter } from 'date-fns';
 import CompleteChargeButton from './completeChargeButton';
+import _ from 'lodash'
 
 
 const styles = theme => ({
@@ -28,35 +29,36 @@ const styles = theme => ({
         margin: theme.spacing.unit * 3
     },
     button: {
-        margin: theme.spacing.unit,
+        marginTop: theme.spacing.unit,
+        marginBottom: theme.spacing.unit,
     }
 });
 
 class GuestChargesTable extends React.Component {
 
     state = {
-        futureCharges: [],
-        pastCharges: []
+        futureCharges: {},
+        pastCharges: {}
     }
 
     populateCharges = () => {
         const now = new Date()
         const { charges } = this.props
-        for (let i = 0; i < charges.length; i++) {
-            const charge = charges[i]
+        for (const chargeId in charges) {
+            const charge = charges[chargeId]
             if (isAfter(charge.startDatetime, now)) {
                 this.setState({
-                    futureCharges: [
+                    futureCharges: {
                         ...this.state.futureCharges,
-                        charge
-                    ]
+                        [chargeId]: charge
+                    }
                 })
             } else {
                 this.setState({
-                    pastCharges: [
+                    pastCharges: {
                         ...this.state.pastCharges,
-                        charge
-                    ]
+                        [chargeId]: charge
+                    }
                 })
             }
         }
@@ -83,7 +85,7 @@ class GuestChargesTable extends React.Component {
                 )
                 case "1":
                 return (
-                    <Button variant="contained" className={classes.button} style={{backgroundColor: 'Red'}}>
+                    <Button variant="contained" color='secondary' className={classes.button}>
                         Rejected
                     </Button>
                     )
@@ -93,7 +95,7 @@ class GuestChargesTable extends React.Component {
                     )
                 case "3":
                     return (
-                        <Button variant="contained" className={classes.button} style={{backgroundColor: 'Blue'}}>
+                        <Button variant="contained" color='primary' className={classes.button}>
                             Completed
                         </Button>
                     )
@@ -125,7 +127,7 @@ class GuestChargesTable extends React.Component {
                 )
             case "3":
                 return (
-                    <Button variant="contained" disabled className={classes.button} style={{backgroundColor: 'green'}}>
+                    <Button variant="contained" color='primary' className={classes.button}>
                         Completed
                     </Button>
                 )
@@ -155,12 +157,13 @@ class GuestChargesTable extends React.Component {
                         </TableRow>
                         </TableHead>
                         <TableBody>
-                            {this.state.futureCharges.map(charge => {
+                            {_.values(this.state.futureCharges).map(charge => {
                                 return (
                                     <TableRow key={charge.chargeId}>
                                         <TableCell component="th" scope="row">
                                             {this.renderStatusButton(charge.status, charge.chargeId)}
                                         </TableCell>
+                                        {}
                                         <TableCell>{charge.charger.chargerAddress}</TableCell>
                                         <TableCell>
                                             {format(charge.startDatetime, "dd MMM yyyy, h:mma")}
@@ -170,8 +173,8 @@ class GuestChargesTable extends React.Component {
                                         </TableCell>
                                         <TableCell>{charge.value}</TableCell>
                                     </TableRow>
-                                )
-                            })}
+                                    )
+                                })}
                         </TableBody>
                     </Table>
                 </Paper>
@@ -192,7 +195,7 @@ class GuestChargesTable extends React.Component {
                         </TableRow>
                         </TableHead>
                         <TableBody>
-                            {this.state.pastCharges.map(charge => {
+                            {_.values(this.state.pastCharges).map(charge => {
                                 return (
                                     <TableRow key={charge.chargeId}>
                                         <TableCell component="th" scope="row">
@@ -208,7 +211,7 @@ class GuestChargesTable extends React.Component {
                                         <TableCell>{charge.value}</TableCell>
                                     </TableRow>
                                 )
-                            })} 
+                            })}
                         </TableBody>
                     </Table>
                 </Paper>

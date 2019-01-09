@@ -8,6 +8,7 @@ import HostChargesTable from './hostCharges';
 import Grid from '@material-ui/core/Grid';
 import { drizzleConnect } from 'drizzle-react';
 import { parse } from 'date-fns';
+import _ from 'lodash';
 
 class ChargesTab extends React.Component {
 
@@ -18,8 +19,8 @@ class ChargesTab extends React.Component {
 
     state = {
         value: 0,
-        guestCharges: [],
-        hostCharges: [],
+        guestCharges: {},
+        hostCharges: {},
         updatedGuest: false,
         updatedHost: false,
     };
@@ -66,11 +67,14 @@ class ChargesTab extends React.Component {
             this.contracts.P2Pcharging.methods.allCharges(id).call().then(charge => {
                 charge.startDatetime = parse(charge.startDatetime, 't', new Date())
                 charge.endDatetime = parse(charge.endDatetime, 't', new Date())
+                charge = {
+                    [charge.chargeId]: charge
+                }
                 this.setState({
-                    guestCharges:[
+                    guestCharges: {
                         ...this.state.guestCharges,
-                        charge
-                    ]
+                        ...charge
+                    }
                 })
             })
         }
@@ -82,11 +86,14 @@ class ChargesTab extends React.Component {
             this.contracts.P2Pcharging.methods.allCharges(id).call().then(charge => {
                 charge.startDatetime = parse(charge.startDatetime, 't', new Date())
                 charge.endDatetime = parse(charge.endDatetime, 't', new Date())
+                charge = {
+                    [charge.chargeId]: charge
+                }
                 this.setState({
-                    hostCharges:[
+                    hostCharges:{
                         ...this.state.hostCharges,
-                        charge
-                    ]
+                        ...charge
+                    }
                 })
             })
         }
