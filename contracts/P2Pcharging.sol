@@ -116,6 +116,14 @@ contract P2Pcharging {
         );
     }
 
+    function updateCharger(
+        string memory chargerAddress, string memory chargerType, uint chargerAmps, uint chargerVoltage
+    ) public {
+        uint chargerId = chargersId[msg.sender];
+        Charger memory newCharger = Charger(chargerId, msg.sender, chargerAddress, chargerType, chargerAmps, chargerVoltage);
+        chargers[chargerId] = newCharger;
+    }
+
     function getGuestChargesId() public view returns (uint[] memory) {
         uint numGuestCharges = guestChargesId[msg.sender].length;
         uint[] memory chargesId = new uint[](numGuestCharges);

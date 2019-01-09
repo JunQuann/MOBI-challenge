@@ -46,11 +46,14 @@ class RegisterChargerForm extends React.Component {
   }
 
   state = {
-    stackId: null
+    stackId: null,
+    hasRegisteredCharger: false,
+    J1772: false
   }
 
   componentDidMount() {
     this.handleScriptLoad()
+    this.hasRegisteredCharger()
   }
 
   handleScriptLoad = () => {
@@ -85,34 +88,58 @@ class RegisterChargerForm extends React.Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    const stackId = this.contracts.P2Pcharging.methods["registerCharger"].cacheSend(
-      this.state.address,
-      this.state.type,
-      this.state.voltage,
-      this.state.amperage, {
-      from: this.props.accounts[0]
-    });
-    this.setState({
-      stackId
-    })
+    if (this.state.hasRegisteredCharger) {
+      const stackId = this.contracts.P2Pcharging.methods["updateCharger"].cacheSend(
+        this.state.address,
+        this.state.type,
+        this.state.voltage,
+        this.state.amperage, {
+        from: this.props.accounts[0]
+      });
+      this.setState({
+        stackId
+      })
+    } else {
+      const stackId = this.contracts.P2Pcharging.methods["registerCharger"].cacheSend(
+        this.state.address,
+        this.state.type,
+        this.state.voltage,
+        this.state.amperage, {
+        from: this.props.accounts[0]
+      });
+      this.setState({
+        stackId
+      })
+    }
   }
 
   getTxStatus = () => {
     const { transactions, transactionStack } = this.props;
     const txHash = transactionStack[this.state.stackId];
-    if (!txHash) return console.log('No txHash');
+    if (!txHash) return ;
     return console.log(transactions[txHash].status);
+  }
+
+  hasRegisteredCharger = () => {
+    this.contracts.P2Pcharging.methods.chargersId(this.props.accounts[0]).call().then(id => {
+      this.contracts.P2Pcharging.methods.chargers(id).call().then(charger => {
+        if(charger.chargerId !== 0) {
+          this.setState({
+            hasRegisteredCharger: true
+          })
+        };
+      })
+    })
   }
 
   render() {
     const { classes } = this.props;
-    console.log(this.state)
 
     return (
       <Grid container className={classes.root} justify="center">
         <Grid item xs={12}>
           <Typography className={classes.dense} variant="h4" align="center">
-            My Listing
+            {this.state.hasRegisteredCharger ? "Update your listing" : "Register your Charger"}
           </Typography>
         </Grid>
         <Grid item xs={5}>
@@ -165,7 +192,7 @@ class RegisterChargerForm extends React.Component {
               />
             </Grid>
             <Button type="submit" variant="contained" color="primary" className={classes.button}>
-              Register
+              {this.state.hasRegisteredCharger ? "Update" : "Register"}
             </Button>
           </form>
         </Grid>
