@@ -45,7 +45,7 @@ class CompleteChargeButton extends React.Component {
     render() {
         return (
             <div>
-                <Button variant="contained" style={{backgroundColor: 'green'}} onClick={this.handleClickOpen}>
+                <Button variant="contained" style={{backgroundColor: 'green', marginTop: '8px', marginBottom: '8px'}} onClick={this.handleClickOpen}>
                     Reserved
                 </Button>
                 <Dialog

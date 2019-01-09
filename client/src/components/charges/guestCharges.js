@@ -44,20 +44,24 @@ class GuestChargesTable extends React.Component {
     populateCharges = () => {
         const now = new Date()
         const { charges } = this.props
-        for (const chargeId in charges) {
+        for (let chargeId in charges) {
             const charge = charges[chargeId]
             if (isAfter(charge.startDatetime, now)) {
-                this.setState({
-                    futureCharges: {
-                        ...this.state.futureCharges,
+                this.setState(state => {
+                    return {
+                        futureCharges: {
+                        ...state.futureCharges,
                         [chargeId]: charge
+                        }
                     }
                 })
             } else {
-                this.setState({
-                    pastCharges: {
-                        ...this.state.pastCharges,
-                        [chargeId]: charge
+                this.setState(state => {
+                    return {
+                        pastCharges: {
+                            ...state.pastCharges,
+                            [chargeId]: charge
+                        }
                     }
                 })
             }
@@ -173,8 +177,8 @@ class GuestChargesTable extends React.Component {
                                         </TableCell>
                                         <TableCell>{charge.value}</TableCell>
                                     </TableRow>
-                                    )
-                                })}
+                                )
+                            })}
                         </TableBody>
                     </Table>
                 </Paper>

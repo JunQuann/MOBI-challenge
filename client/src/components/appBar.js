@@ -35,7 +35,7 @@ class PrimarySearchAppBar extends React.Component {
           <Toolbar>
             <Typography className={classes.title} variant="h6" color="inherit" noWrap>
               <Link to="/" style={{ textDecoration: 'none', color: 'white' }} >
-                  EVelozcity
+                  Torque
               </Link>
             </Typography>
             <MapsSearchBar handleAddressInput={this.props.handleAddressInput}/>

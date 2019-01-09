@@ -73,7 +73,7 @@ class PendingChargeButton extends React.Component {
     render() {
         return (
             <div>
-                <Button variant="contained" style={{backgroundColor: 'orange'}} onClick={this.handleClickOpen}>
+                <Button variant="contained" style={{backgroundColor: 'orange', marginTop: '8px', marginBottom: '8px'}} onClick={this.handleClickOpen}>
                     Pending
                 </Button>
                 <Dialog

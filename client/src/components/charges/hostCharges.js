@@ -47,17 +47,21 @@ class HostChargesTable extends React.Component {
         for (const chargeId in charges) {
             const charge = charges[chargeId]
             if (isAfter(charge.startDatetime, now)) {
-                this.setState({
-                    futureCharges: {
-                        ...this.state.futureCharges,
+                this.setState(state => {
+                    return {
+                        futureCharges: {
+                        ...state.futureCharges,
                         [chargeId]: charge
+                        }
                     }
                 })
             } else {
-                this.setState({
-                    pastCharges: {
-                        ...this.state.pastCharges,
-                        [chargeId]: charge
+                this.setState(state => {
+                    return {
+                        pastCharges: {
+                            ...state.pastCharges,
+                            [chargeId]: charge
+                        }
                     }
                 })
             }
