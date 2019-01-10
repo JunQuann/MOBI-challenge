@@ -123,7 +123,7 @@ class RegisterChargerForm extends React.Component {
   hasRegisteredCharger = () => {
     this.contracts.P2Pcharging.methods.chargersId(this.props.accounts[0]).call().then(id => {
       this.contracts.P2Pcharging.methods.chargers(id).call().then(charger => {
-        if(charger.chargerId !== 0) {
+        if(charger.chargerId != 0) {
           this.setState({
             hasRegisteredCharger: true
           })
@@ -134,7 +134,6 @@ class RegisterChargerForm extends React.Component {
 
   render() {
     const { classes } = this.props;
-
     return (
       <Grid container className={classes.root} justify="center">
         <Grid item xs={12}>
