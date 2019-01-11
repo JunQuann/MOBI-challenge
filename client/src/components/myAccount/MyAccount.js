@@ -95,7 +95,7 @@ class MyAccount extends React.Component {
     }
 
     render() {
-        const { classes, P2Pcharging } = this.props;
+        const { classes } = this.props;
 
         return (
             <Grid container justify="center">

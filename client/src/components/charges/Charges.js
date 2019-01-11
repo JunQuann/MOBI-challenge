@@ -8,7 +8,6 @@ import HostChargesTable from './hostCharges';
 import Grid from '@material-ui/core/Grid';
 import { drizzleConnect } from 'drizzle-react';
 import { parse } from 'date-fns';
-import _ from 'lodash';
 
 class ChargesTab extends React.Component {
 

@@ -195,7 +195,6 @@ class HostChargesTable extends React.Component {
                         </TableRow>
                         </TableHead>
                         <TableBody>
-                            {this.state.pastCharges}
                             {_.values(this.state.pastCharges).map(charge => {
                                 return (
                                     <TableRow key={charge.chargeId}>
