@@ -152,6 +152,6 @@ contract P2Pcharging {
 
     // Initialized with 1 Charger for testing purposes
     constructor() public {
-        registerCharger("68 Willow Rd, Menlo Park, CA 94025, USA", "CHAdeMO", 30, 240);
+        registerCharger("31 Saw Mill Court, Mountain View, CA, USA", "CHAdeMO", 30, 240);
     }
 }
