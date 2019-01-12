@@ -12,7 +12,9 @@ P2P EV Charging web platform built on top of Ethereum smart contracts
     1. `truffle build`
     2. `truffle compile`
     3. `truffle migrate`
-8. On terminal, go into the **client/** folder and run `npm run start`
+8. On terminal, go into the **client/** folder and run 
+    1. `npm install`
+    2. `npm run start` 
 9. The web application will be running on [localhost:3000](localhost:3000)
 
 **_Note: You can change the account on metamask to test different users_**
